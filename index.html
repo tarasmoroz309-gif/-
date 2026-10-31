@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#a21caf">
+<title>Мій Магазин</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#26152d;background:#fff7fc;--pink:#c0268c;--pink2:#fce7f3;--line:#f1d6e8;--muted:#806b7b}
+*{box-sizing:border-box}body{margin:0;padding-bottom:28px}header{background:linear-gradient(135deg,#86198f,#db2777);color:white;padding:22px 17px 18px;padding-top:calc(18px + env(safe-area-inset-top))}h1{font-size:25px;margin:0 0 4px}header p{margin:0;color:#fce7f3;font-size:13px}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#fff;position:sticky;top:0;z-index:3;border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch}nav button{flex:0 0 auto;border:0;border-radius:10px;padding:10px 12px;background:#fce7f3;color:#701a55;font-weight:650;font-size:13px}nav button.active{background:var(--pink);color:white}
+main{padding:13px;max-width:760px;margin:auto}.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{background:white;border:1px solid #f7e5ef;border-radius:15px;padding:14px;margin-bottom:11px;box-shadow:0 2px 8px #83184308}.metric small{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:21px;margin-top:6px;overflow-wrap:anywhere}h2{font-size:18px;margin:3px 0 12px}h3{font-size:15px;margin:12px 0 7px}label{display:block;font-size:12px;color:#705b6b;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #e7cbdc;border-radius:10px;font-size:16px;background:white;color:#26152d;min-width:0}textarea{min-height:70px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}button.primary{width:100%;border:0;background:var(--pink);color:white;padding:13px;border-radius:11px;font-size:15px;font-weight:700;margin-top:11px}button.secondary{border:0;background:#fce7f3;color:#83145e;border-radius:9px;padding:9px 11px;font-weight:650}button.danger{border:0;background:#fee2e2;color:#991b1b;border-radius:8px;padding:7px 9px}.item{display:flex;justify-content:space-between;gap:9px;align-items:center;border-top:1px solid #f5e8ef;padding:11px 0}.item:first-child{border-top:0}.muted,.note{color:var(--muted);font-size:12px;line-height:1.45}.empty{color:#987f90;text-align:center;padding:17px}.tag{display:inline-block;background:#fce7f3;color:#86145d;border-radius:20px;padding:3px 8px;font-size:11px;margin-top:4px}.item b{overflow-wrap:anywhere}.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.hidden{display:none!important}.filelabel{display:block;text-align:center;background:#fce7f3;color:#83145e;border-radius:10px;padding:12px;font-weight:700;margin-top:9px}.summary{background:#fff4fa;border-radius:10px;padding:10px;margin-top:9px}.note{margin-top:12px}@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Мій Магазин">
+</head>
+<body>
+<header><h1>Мій Магазин</h1><p>Облік товарів · склад · надходження · продажі · фінанси</p></header>
+<nav id="nav">
+<button class="active" data-page="home">Головна</button><button data-page="products">Товари</button><button data-page="incoming">Надходження</button><button data-page="sale">Продаж</button><button data-page="stock">Склад</button><button data-page="history">Історія</button><button data-page="expenses">Витрати</button><button data-page="suppliers">Постачальники</button><button data-page="stats">Статистика</button><button data-page="settings">Налаштування</button>
+</nav>
+<main>
+<section id="home" class="page active">
+<div class="grid">
+<div class="card metric"><small>Продажі сьогодні</small><strong id="todayTotal">0 ₴</strong></div>
+<div class="card metric"><small>Усього продажів</small><strong id="allTotal">0 ₴</strong></div>
+<div class="card metric"><small>Прибуток після витрат</small><strong id="profitTotal">0 ₴</strong></div>
+<div class="card metric"><small>Товарів на складі</small><strong id="stockCount">0</strong></div>
+<div class="card metric"><small>Отримано грошей</small><strong id="paidTotal">0 ₴</strong></div>
+<div class="card metric"><small>Борги покупців</small><strong id="debtTotal">0 ₴</strong></div>
+</div><div class="card"><h2>Останні продажі</h2><div id="recent"></div></div>
+<p class="note">Дані зберігаються локально в цьому браузері на телефоні. Регулярно створюй резервну копію в розділі «Налаштування».</p>
+</section>
+<section id="products" class="page">
+<div class="card"><h2>Додати товар до довідника</h2><label>Назва товару</label><input id="pname" placeholder="Назва товару"><div class="row"><div><label>Закупівельна ціна, ₴</label><input id="pcost" type="number" min="0" step=".01"></div><div><label>Ціна продажу, ₴</label><input id="pprice" type="number" min="0" step=".01"></div></div><button class="primary" id="addProduct">Додати товар</button><p class="note">Якщо товар із такою назвою вже є, новий запис не створюється — використовуй «Надходження», щоб збільшити залишок.</p></div>
+<div class="card"><h2>Довідник товарів</h2><div id="productList"></div></div>
+</section>
+<section id="incoming" class="page">
+<div class="card"><h2>Нове надходження</h2><label>Товар</label><select id="inProduct"></select><label>Або назва нового товару</label><input id="inNewName" placeholder="Залиш порожнім, якщо товар уже є"><div class="row"><div><label>Кількість</label><input id="inQty" type="number" min="1" step="1" value="1"></div><div><label>Закупівельна ціна за одиницю, ₴</label><input id="inCost" type="number" min="0" step=".01"></div></div><div class="row"><div><label>Ціна продажу за одиницю, ₴</label><input id="inPrice" type="number" min="0" step=".01"></div><div><label>Доставка / інші витрати партії, ₴</label><input id="inExtra" type="number" min="0" step=".01" value="0"></div></div><label>Постачальник</label><select id="inSupplier"></select><label>Дата надходження</label><input id="inDate" type="date"><button class="primary" id="addIncoming">Зберегти надходження</button><p class="note">Однакові назви товарів об'єднуються в один товар, але кожне надходження зберігається окремою партією для розрахунку собівартості.</p></div>
+<div class="card"><h2>Останні партії</h2><div id="batchList"></div></div>
+</section>
+<section id="sale" class="page">
+<div class="card"><h2>Оформити продаж</h2><label>Товар</label><select id="saleProduct"></select><div class="row"><div><label>Кількість</label><input id="saleQty" type="number" min="1" step="1" value="1"></div><div><label>Ціна продажу за одиницю, ₴</label><input id="salePrice" type="number" min="0" step=".01"></div></div><label>Покупець</label><input id="saleCustomer" placeholder="Ім'я покупця"><label>Дата продажу</label><input id="saleDate" type="date"><label>Оплата</label><select id="paymentStatus"><option value="paid">Сплачено повністю</option><option value="partial">Сплачено частково</option><option value="debt">У борг</option></select><label>Отримано, ₴</label><input id="paidAmount" type="number" min="0" step=".01"><div class="summary muted" id="saleHint">Обери товар, щоб побачити залишок.</div><button class="primary" id="addSale">Записати продаж</button></div>
+</section>
+<section id="stock" class="page"><div class="card"><h2>Залишки на складі</h2><div id="stockList"></div></div></section>
+<section id="history" class="page"><div class="card"><h2>Історія продажів</h2><div id="historyList"></div></div><div class="card"><h2>Історія надходжень</h2><div id="incomingHistory"></div></div></section>
+<section id="expenses" class="page"><div class="card"><h2>Додати витрату</h2><label>Назва витрати</label><input id="expenseName" placeholder="Наприклад, пакування"><div class="row"><div><label>Сума, ₴</label><input id="expenseAmount" type="number" min="0" step=".01"></div><div><label>Дата</label><input id="expenseDate" type="date"></div></div><label>Примітка</label><input id="expenseNote" placeholder="Необов'язково"><button class="primary" id="addExpense">Зберегти витрату</button></div><div class="card"><h2>Список витрат</h2><div id="expenseList"></div></div></section>
+<section id="suppliers" class="page"><div class="card"><h2>Додати постачальника</h2><label>Назва / ім'я</label><input id="supplierName"><div class="row"><div><label>Телефон</label><input id="supplierPhone" type="tel"></div><div><label>Контакт / примітка</label><input id="supplierNote"></div></div><button class="primary" id="addSupplier">Зберегти постачальника</button></div><div class="card"><h2>Довідник постачальників</h2><div id="supplierList"></div></div></section>
+<section id="stats" class="page"><div class="card"><h2>Статистика</h2><div id="statsContent"></div></div></section>
+<section id="settings" class="page"><div class="card"><h2>Валюта та курс</h2><label>Показувати суми в</label><select id="currency"><option value="UAH">Гривнях (₴)</option><option value="USD">Доларах США ($)</option></select><label>Курс гривень за 1 долар</label><input id="rate" type="number" min=".01" step=".01"><button class="primary" id="saveSettings">Зберегти налаштування</button></div><div class="card"><h2>Резервна копія</h2><button class="primary" id="exportData">Завантажити резервну копію</button><label class="filelabel" for="importFile">Відновити з резервної копії JSON</label><input id="importFile" type="file" accept="application/json,.json" class="hidden"><p class="note">Зберігай копію у програмі «Файли» або iCloud Drive. Відновлення замінить поточні дані.</p></div><div class="card"><h2>Дані програми</h2><button class="danger" id="clearData">Очистити всі дані</button></div></section>
+</main>
+<script>
+const KEY='my_shop_offline_v3';
+const defaults={products:[],sales:[],batches:[],expenses:[],suppliers:[],currency:'UAH',rate:41.5};
+let db;try{db={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){db={...defaults}}
+for(const k of ['products','sales','batches','expenses','suppliers'])if(!Array.isArray(db[k]))db[k]=[];
+const $=id=>document.getElementById(id), today=()=>new Date().toLocaleDateString('sv-SE');
+const num=v=>Number(v)||0, fmt=n=>new Intl.NumberFormat('uk-UA',{maximumFractionDigits:2}).format(num(n));
+const money=n=>db.currency==='USD'?'$'+fmt(num(n)/db.rate):fmt(n)+' ₴';
+const uid=()=>Date.now()+Math.floor(Math.random()*10000);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function productById(id){return db.products.find(p=>String(p.id)===String(id))}
+function stock(p){return db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+num(b.qty),0)}
+function migrate(){db.products.forEach(p=>{if(!db.batches.some(b=>b.productId===p.id)&&num(p.qty)>0){db.batches.push({id:uid(),productId:p.id,qty:p.qty,unitCost:num(p.cost),extraPerUnit:0,date:today(),supplierId:null})}});db.products.forEach(p=>p.qty=stock(p))}
+migrate();
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===b.dataset.page))});
+$('addProduct').onclick=()=>{let name=$('pname').value.trim(),cost=num($('pcost').value),price=num($('pprice').value);if(!name||$('pcost').value===''||$('pprice').value===''){alert('Вкажи назву та обидві ціни.');return}if(db.products.some(p=>p.name.trim().toLowerCase()===name.toLowerCase())){alert('Такий товар уже є. Додай його кількість через розділ «Надходження».');return}db.products.push({id:uid(),name,cost,price});$('pname').value=$('pcost').value=$('pprice').value='';save()};
+$('inProduct').onchange=()=>{let p=productById($('inProduct').value);if(p){$('inCost').value=p.cost;$('inPrice').value=p.price}};
+$('addIncoming').onclick=()=>{let existing=productById($('inProduct').value),name=$('inNewName').value.trim()||(existing&&existing.name),qty=num($('inQty').value),cost=Number($('inCost').value),price=Number($('inPrice').value),extra=num($('inExtra').value);if(!name||!Number.isInteger(qty)||qty<1||!Number.isFinite(cost)||cost<0||!Number.isFinite(price)||price<0||extra<0){alert('Перевір назву, кількість і ціни.');return}let p=db.products.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());if(!p){p={id:uid(),name,cost,price};db.products.push(p)}else{p.price=price;p.cost=cost}let batch={id:uid(),productId:p.id,qty,unitCost:cost,extraPerUnit:extra/qty,date:$('inDate').value||today(),supplierId:$('inSupplier').value||null};db.batches.push(batch);db.products.forEach(x=>x.qty=stock(x));$('inNewName').value='';$('inQty').value=1;$('inExtra').value=0;save();alert('Надходження збережено. Кількість додано до наявного товару.')};
+function updatePayment(){let total=num($('saleQty').value)*num($('salePrice').value),st=$('paymentStatus').value;if(st==='paid')$('paidAmount').value=total.toFixed(2);if(st==='debt')$('paidAmount').value='0';$('paidAmount').disabled=st!=='partial';$('saleHint').textContent='Сума продажу: '+money(total)+' · '+(productById($('saleProduct').value)?'На складі: '+stock(productById($('saleProduct').value))+' шт.':'Обери товар') }
+$('saleProduct').onchange=()=>{let p=productById($('saleProduct').value);$('salePrice').value=p?p.price:'';updatePayment()};
+['saleQty','salePrice','paymentStatus'].forEach(id=>$(id).addEventListener(id==='paymentStatus'?'change':'input',updatePayment));
+$('addSale').onclick=()=>{let p=productById($('saleProduct').value),qty=num($('saleQty').value),price=Number($('salePrice').value),paid=num($('paidAmount').value),status=$('paymentStatus').value;if(!p||!Number.isInteger(qty)||qty<1||qty>stock(p)){alert('Перевір товар і кількість на складі.');return}if(!Number.isFinite(price)||price<0){alert('Вкажи правильну ціну.');return}let total=qty*price;if(paid<0||paid>total||(status==='paid'&&Math.abs(paid-total)>.009)||(status==='debt'&&paid!==0)||(status==='partial'&&(paid<=0||paid>=total))){alert('Перевір суму оплати та її статус.');return}
+let need=qty,costTotal=0,alloc=[];let batches=db.batches.filter(b=>b.productId===p.id&&b.qty>0).sort((a,b)=>String(a.date).localeCompare(String(b.date)));for(let b of batches){if(!need)break;let take=Math.min(need,b.qty),unit=num(b.unitCost)+num(b.extraPerUnit);costTotal+=take*unit;alloc.push({batchId:b.id,qty:take,unitCost:unit});b.qty-=take;need-=take}
+db.sales.unshift({id:uid(),productId:p.id,name:p.name,qty,price,total,customer:$('saleCustomer').value.trim(),paid,costTotal,profit:total-costTotal,date:$('saleDate').value||today(),alloc});p.qty=stock(p);$('saleQty').value=1;$('saleCustomer').value='';$('paymentStatus').value='paid';updatePayment();save();alert('Продаж записано!')};
+$('addExpense').onclick=()=>{let name=$('expenseName').value.trim(),amount=Number($('expenseAmount').value);if(!name||!Number.isFinite(amount)||amount<=0){alert('Вкажи назву та суму витрати.');return}db.expenses.unshift({id:uid(),name,amount,date:$('expenseDate').value||today(),note:$('expenseNote').value.trim()});$('expenseName').value=$('expenseAmount').value=$('expenseNote').value='';save()};
+$('addSupplier').onclick=()=>{let name=$('supplierName').value.trim();if(!name){alert('Вкажи назву постачальника.');return}db.suppliers.push({id:uid(),name,phone:$('supplierPhone').value.trim(),note:$('supplierNote').value.trim()});$('supplierName').value=$('supplierPhone').value=$('supplierNote').value='';save()};
+$('saveSettings').onclick=()=>{let rate=Number($('rate').value);if(!Number.isFinite(rate)||rate<=0){alert('Вкажи правильний курс.');return}db.rate=rate;db.currency=$('currency').value;save();alert('Налаштування збережено.')};
+$('exportData').onclick=()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='miy-magazyn-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!x||!Array.isArray(x.products)||!Array.isArray(x.sales)||!Array.isArray(x.batches))throw Error();if(!confirm('Відновити копію? Поточні дані буде замінено.'))return;db={...defaults,...x};save();alert('Резервну копію відновлено.')}catch(err){alert('Не вдалося прочитати копію. Перевір JSON-файл.')}e.target.value=''};
+$('clearData').onclick=()=>{if(confirm('Видалити всі товари, продажі та інші дані?')){db={...defaults,products:[],sales:[],batches:[],expenses:[],suppliers:[]};save()}};
+function render(){let sales=db.sales,total=sales.reduce((a,s)=>a+num(s.total),0),todaySum=sales.filter(s=>s.date===today()).reduce((a,s)=>a+num(s.total),0),received=sales.reduce((a,s)=>a+num(s.paid),0),debt=sales.reduce((a,s)=>a+Math.max(0,num(s.total)-num(s.paid)),0),gross=sales.reduce((a,s)=>a+num(s.profit??(num(s.total)-num(s.costTotal))),0),expenses=db.expenses.reduce((a,e)=>a+num(e.amount),0);
+$('todayTotal').textContent=money(todaySum);$('allTotal').textContent=money(total);$('profitTotal').textContent=money(gross-expenses);$('stockCount').textContent=db.products.reduce((a,p)=>a+stock(p),0);$('paidTotal').textContent=money(received);$('debtTotal').textContent=money(debt);
+$('recent').innerHTML=sales.slice(0,5).map(s=>`<div class="item"><div><b>${esc(s.name)}</b><div class="muted">${esc(s.date)} · ${s.qty} шт.</div></div><b>${money(s.total)}</b></div>`).join('')||'<div class="empty">Продажів поки немає.</div>';
+$('productList').innerHTML=db.products.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><div class="muted">Закупівля орієнтовно: ${money(p.cost)} · Продаж: ${money(p.price)} · В наявності: ${stock(p)} шт.</div></div></div>`).join('')||'<div class="empty">Товарів поки немає.</div>';
+$('stockList').innerHTML=db.products.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><div class="muted">Ціна продажу: ${money(p.price)}</div></div><b>${stock(p)} шт.</b></div>`).join('')||'<div class="empty">Склад порожній.</div>';
+$('historyList').innerHTML=sales.map(s=>{let rem=Math.max(0,num(s.total)-num(s.paid)),status=rem<.01?'Сплачено повністю':num(s.paid)>0?'Часткова оплата':'Борг';return `<div class="item"><div><b>${esc(s.name)}</b><div class="muted">${esc(s.date)} · ${s.qty} × ${money(s.price)}</div><div class="muted">Покупець: ${esc(s.customer||'не вказаний')}</div><div class="muted">${status} · Отримано ${money(s.paid)} · Борг ${money(rem)}</div><div class="muted">Собівартість ${money(s.costTotal)} · Прибуток ${money(s.profit??(s.total-s.costTotal))}</div></div><b>${money(s.total)}</b></div>`}).join('')||'<div class="empty">Історія порожня.</div>';
+$('incomingHistory').innerHTML=db.batches.slice().reverse().slice(0,40).map(b=>{let p=productById(b.productId),sup=db.suppliers.find(x=>String(x.id)===String(b.supplierId));return `<div class="item"><div><b>${esc(p?.name||'Товар')}</b><div class="muted">${esc(b.date)} · ${b.qty} шт. · Закупівля ${money(b.unitCost)} / шт.</div><div class="muted">${sup?'Постачальник: '+esc(sup.name):''} · Додатково: ${money(num(b.extraPerUnit)*num(b.qty))}</div></div></div>`}).join('')||'<div class="empty">Надходжень поки немає.</div>';
+$('batchList').innerHTML=db.batches.slice().reverse().slice(0,20).map(b=>`<div class="item"><div><b>${esc(productById(b.productId)?.name||'Товар')}</b><div class="muted">${esc(b.date)} · Початкова партія: ${b.qty} шт. · Закупівля ${money(b.unitCost)} / шт.</div></div></div>`).join('')||'<div class="empty">Партій поки немає.</div>';
+$('expenseList').innerHTML=db.expenses.map(e=>`<div class="item"><div><b>${esc(e.name)}</b><div class="muted">${esc(e.date)} · ${esc(e.note)}</div></div><b>${money(e.amount)}</b></div>`).join('')||'<div class="empty">Витрат поки немає.</div>';
+$('supplierList').innerHTML=db.suppliers.map(s=>`<div class="item"><div><b>${esc(s.name)}</b><div class="muted">${esc(s.phone)} ${esc(s.note)}</div></div></div>`).join('')||'<div class="empty">Постачальників поки немає.</div>';
+$('statsContent').innerHTML=`<p>Кількість продажів: <b>${sales.length}</b></p><p>Виручка: <b>${money(total)}</b></p><p>Собівартість проданого: <b>${money(sales.reduce((a,s)=>a+num(s.costTotal),0))}</b></p><p>Валовий прибуток: <b>${money(gross)}</b></p><p>Додаткові витрати: <b>${money(expenses)}</b></p><p>Орієнтовний чистий результат: <b>${money(gross-expenses)}</b></p><p>Кількість товарних позицій: <b>${db.products.length}</b></p><p>Загальний залишок: <b>${db.products.reduce((a,p)=>a+stock(p),0)} шт.</b></p>`;
+$('saleProduct').innerHTML='<option value="">Обери товар</option>'+db.products.map(p=>`<option value="${p.id}" ${stock(p)===0?'disabled':''}>${esc(p.name)} — ${stock(p)} шт.</option>`).join('');
+$('inProduct').innerHTML='<option value="">Новий товар / введи назву нижче</option>'+db.products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${stock(p)} шт.</option>`).join('');
+$('inSupplier').innerHTML='<option value="">Не вказано</option>'+db.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+$('currency').value=db.currency;$('rate').value=db.rate;
+}
+['inDate','saleDate','expenseDate'].forEach(id=>$(id).value=today());
+render();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('Офлайн-режим не зареєстровано', err));
+  });
+}
+</script>
+</body></html>
